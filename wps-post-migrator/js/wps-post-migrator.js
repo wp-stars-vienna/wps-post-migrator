@@ -151,10 +151,10 @@ const wpsGetPostsJson = (event) => {
     
     console.log('start page', startPage)
 
-    axios.get(`${baseUrl}/${endpoint}`)
+    axios.get(`${baseUrl}/${endpoint}${perPage}`)
         .then(res => {
             console.log(res.headers["x-wp-totalpages"])
-            let totalPages = Math.ceil(parseInt(res.headers["x-wp-totalpages"]) / 10)
+            let totalPages = parseInt(res.headers["x-wp-totalpages"])
             let initUrl = `${baseUrl}/${endpoint}${perPage}`
 
             for (let page = startPage; page < totalPages; page++) {
@@ -170,23 +170,8 @@ const wpsGetPostsJson = (event) => {
         })
 }
 
-const alertWorking = (page, totalPages, type) => {
-    let wrapper = (type == 'category') ? document.querySelector('.category-alert') : document.querySelector('.post-alert')
-    let alertDiv = document.createElement('div')
-    alertDiv.dataset.page = page
-    alertDiv.innerText = `Working on page ${page} of ${totalPages} the migration!`
-
-    wrapper.appendChild(alertDiv)
-}
-
-const alertFinished = (page, type) => {
-    let parent = (type == 'category') ? document.querySelector('.category-alert') : document.querySelector('.post-alert')
-    let targetElem = parent.querySelector(`div[data-page="${page}"]`)
-
-    targetElem.innerHTML = targetElem.innerText + ' <span style="color: green;">Finished!</span>'
-}
-
 const wpsGetPagedPosts = (initUrl, page, baseUrl) => {
+    console.log(`getting page ${page}`)
     pageParam = `&page=${page}`
     targetUrl = `${initUrl}${pageParam}`
 
@@ -235,3 +220,18 @@ const wpsGetPagedPosts = (initUrl, page, baseUrl) => {
         })
 }
 
+const alertWorking = (page, totalPages, type) => {
+    let wrapper = (type == 'category') ? document.querySelector('.category-alert') : document.querySelector('.post-alert')
+    let alertDiv = document.createElement('div')
+    alertDiv.dataset.page = page
+    alertDiv.innerText = `Working on page ${page} of ${totalPages} the migration!`
+
+    wrapper.appendChild(alertDiv)
+}
+
+const alertFinished = (page, type) => {
+    let parent = (type == 'category') ? document.querySelector('.category-alert') : document.querySelector('.post-alert')
+    let targetElem = parent.querySelector(`div[data-page="${page}"]`)
+
+    targetElem.innerHTML = targetElem.innerText + ' <span style="color: green;">Finished!</span>'
+}
